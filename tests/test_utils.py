@@ -22,6 +22,8 @@ from unittest.mock import patch, MagicMock
 # Add the parent directory to the path so we can import the modules
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from mnist_recognizer import create_test_digit, save_plot
+
 
 class TestSetupDevice(unittest.TestCase):
     """Test cases for setup_device function (mocked to avoid device setup)"""
@@ -95,9 +97,6 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_import_and_create_digit(self):
         """Test that we can import and create a test digit"""
-        # Import the function here to avoid module-level import issues
-        from mnist_recognizer import create_test_digit
-
         img = create_test_digit()
 
         # Verify image properties
@@ -107,8 +106,6 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_different_sizes(self):
         """Test create_test_digit with different sizes"""
-        from mnist_recognizer import create_test_digit
-
         for size in [16, 32, 64, 128]:
             with self.subTest(size=size):
                 img = create_test_digit(size=size)
@@ -117,8 +114,6 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_all_digits(self):
         """Test create_test_digit for all digit values 0-9"""
-        from mnist_recognizer import create_test_digit
-
         for digit in range(10):
             with self.subTest(digit=digit):
                 img = create_test_digit(digit=digit)
@@ -144,8 +139,6 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_pixel_values(self):
         """Test that created images have correct pixel value ranges"""
-        from mnist_recognizer import create_test_digit
-
         img = create_test_digit(digit=0)
         img_array = np.array(img)
 
@@ -160,8 +153,6 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_different_digits_are_different(self):
         """Test that different digits create visually different images"""
-        from mnist_recognizer import create_test_digit
-
         img0 = create_test_digit(digit=0)
         img1 = create_test_digit(digit=1)
 
@@ -176,8 +167,6 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_large_digit_value(self):
         """Test create_test_digit with digit values > 9"""
-        from mnist_recognizer import create_test_digit
-
         # Should fall back to default square with text
         img = create_test_digit(digit=15)
 
@@ -190,8 +179,6 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_edge_size_values(self):
         """Test create_test_digit with edge case sizes"""
-        from mnist_recognizer import create_test_digit
-
         # Very small size
         img_small = create_test_digit(size=8)
         self.assertEqual(img_small.size, (8, 8))
@@ -472,8 +459,6 @@ class TestUtilsIntegration(unittest.TestCase):
 
     def test_create_digit_and_save_plot_integration(self):
         """Test creating a digit image and saving it as a plot"""
-        from mnist_recognizer import create_test_digit, save_plot
-
         # Create a test digit
         img = create_test_digit(digit=7)
 
