@@ -13,8 +13,7 @@ import sys
 
 # Import modules
 sys.path.append(str(Path(__file__).parent.parent / "src"))
-from mnist_recognizer.training import MNISTTrainer
-from mnist_recognizer.utils import print_training_header, print_success_message
+from mnist_recognizer import MNISTTrainer, print_training_header, print_success_message
 
 
 def parse_arguments():

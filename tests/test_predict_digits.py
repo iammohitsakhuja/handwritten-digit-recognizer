@@ -35,8 +35,7 @@ except ImportError:
 
 # Import from inference module
 try:
-    from mnist_recognizer.utils import create_test_digit
-    from mnist_recognizer.inference import MNISTPredictor
+    from mnist_recognizer import create_test_digit, MNISTPredictor
 
     INFERENCE_AVAILABLE = True
 except ImportError:

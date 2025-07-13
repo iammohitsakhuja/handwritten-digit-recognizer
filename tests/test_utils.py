@@ -38,7 +38,7 @@ class TestSetupDevice(unittest.TestCase):
         mock_cuda_available,
     ):
         """Test setup_device when CUDA is available"""
-        from mnist_recognizer.utils import setup_device
+        from mnist_recognizer import setup_device
 
         # Mock CUDA availability
         mock_cuda_available.return_value = True
@@ -61,7 +61,7 @@ class TestSetupDevice(unittest.TestCase):
         self, mock_print, mock_mps, mock_cuda_available
     ):
         """Test setup_device when MPS is available but CUDA is not"""
-        from mnist_recognizer.utils import setup_device
+        from mnist_recognizer import setup_device
 
         # Mock availability
         mock_cuda_available.return_value = False
@@ -77,7 +77,7 @@ class TestSetupDevice(unittest.TestCase):
     @patch("builtins.print")
     def test_setup_device_cpu_fallback(self, mock_print, mock_mps, mock_cuda_available):
         """Test setup_device falls back to CPU when no GPU is available"""
-        from mnist_recognizer.utils import setup_device
+        from mnist_recognizer import setup_device
 
         # Mock no GPU availability
         mock_cuda_available.return_value = False
@@ -96,7 +96,7 @@ class TestCreateTestDigit(unittest.TestCase):
     def test_import_and_create_digit(self):
         """Test that we can import and create a test digit"""
         # Import the function here to avoid module-level import issues
-        from mnist_recognizer.utils import create_test_digit
+        from mnist_recognizer import create_test_digit
 
         img = create_test_digit()
 
@@ -107,7 +107,7 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_different_sizes(self):
         """Test create_test_digit with different sizes"""
-        from mnist_recognizer.utils import create_test_digit
+        from mnist_recognizer import create_test_digit
 
         for size in [16, 32, 64, 128]:
             with self.subTest(size=size):
@@ -117,7 +117,7 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_all_digits(self):
         """Test create_test_digit for all digit values 0-9"""
-        from mnist_recognizer.utils import create_test_digit
+        from mnist_recognizer import create_test_digit
 
         for digit in range(10):
             with self.subTest(digit=digit):
@@ -144,7 +144,7 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_pixel_values(self):
         """Test that created images have correct pixel value ranges"""
-        from mnist_recognizer.utils import create_test_digit
+        from mnist_recognizer import create_test_digit
 
         img = create_test_digit(digit=0)
         img_array = np.array(img)
@@ -160,7 +160,7 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_different_digits_are_different(self):
         """Test that different digits create visually different images"""
-        from mnist_recognizer.utils import create_test_digit
+        from mnist_recognizer import create_test_digit
 
         img0 = create_test_digit(digit=0)
         img1 = create_test_digit(digit=1)
@@ -176,7 +176,7 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_large_digit_value(self):
         """Test create_test_digit with digit values > 9"""
-        from mnist_recognizer.utils import create_test_digit
+        from mnist_recognizer import create_test_digit
 
         # Should fall back to default square with text
         img = create_test_digit(digit=15)
@@ -190,7 +190,7 @@ class TestCreateTestDigit(unittest.TestCase):
 
     def test_create_test_digit_edge_size_values(self):
         """Test create_test_digit with edge case sizes"""
-        from mnist_recognizer.utils import create_test_digit
+        from mnist_recognizer import create_test_digit
 
         # Very small size
         img_small = create_test_digit(size=8)
@@ -215,7 +215,7 @@ class TestEnsureDirectory(unittest.TestCase):
 
     def test_ensure_directory_creates_new_directory(self):
         """Test that ensure_directory creates a new directory"""
-        from mnist_recognizer.utils import ensure_directory
+        from mnist_recognizer import ensure_directory
 
         new_dir = self.temp_path / "new_directory"
 
@@ -235,7 +235,7 @@ class TestEnsureDirectory(unittest.TestCase):
 
     def test_ensure_directory_creates_nested_directories(self):
         """Test that ensure_directory creates nested directories"""
-        from mnist_recognizer.utils import ensure_directory
+        from mnist_recognizer import ensure_directory
 
         nested_dir = self.temp_path / "level1" / "level2" / "level3"
 
@@ -253,7 +253,7 @@ class TestEnsureDirectory(unittest.TestCase):
 
     def test_ensure_directory_existing_directory(self):
         """Test that ensure_directory works with existing directories"""
-        from mnist_recognizer.utils import ensure_directory
+        from mnist_recognizer import ensure_directory
 
         existing_dir = self.temp_path / "existing"
         existing_dir.mkdir()
@@ -270,7 +270,7 @@ class TestEnsureDirectory(unittest.TestCase):
 
     def test_ensure_directory_with_string_path(self):
         """Test that ensure_directory works with string paths"""
-        from mnist_recognizer.utils import ensure_directory
+        from mnist_recognizer import ensure_directory
 
         new_dir_str = str(self.temp_path / "string_path")
 
@@ -297,7 +297,7 @@ class TestSavePlot(unittest.TestCase):
 
     def test_save_plot_creates_file(self):
         """Test that save_plot creates a plot file"""
-        from mnist_recognizer.utils import save_plot
+        from mnist_recognizer import save_plot
 
         # Create a simple plot
         fig, ax = plt.subplots()
@@ -318,7 +318,7 @@ class TestSavePlot(unittest.TestCase):
 
     def test_save_plot_creates_directory(self):
         """Test that save_plot creates output directory if it doesn't exist"""
-        from mnist_recognizer.utils import save_plot
+        from mnist_recognizer import save_plot
 
         new_dir = self.temp_path / "plots"
 
@@ -338,7 +338,7 @@ class TestSavePlot(unittest.TestCase):
 
     def test_save_plot_different_dpi(self):
         """Test that save_plot accepts different DPI values"""
-        from mnist_recognizer.utils import save_plot
+        from mnist_recognizer import save_plot
 
         fig, ax = plt.subplots()
         ax.plot([1, 2, 3])
@@ -352,7 +352,7 @@ class TestSavePlot(unittest.TestCase):
     @patch("builtins.print")
     def test_save_plot_prints_message(self, mock_print):
         """Test that save_plot prints the expected message"""
-        from mnist_recognizer.utils import save_plot
+        from mnist_recognizer import save_plot
 
         fig, ax = plt.subplots()
         ax.plot([1, 2, 3])
@@ -367,7 +367,7 @@ class TestSavePlot(unittest.TestCase):
 
     def test_save_plot_with_path_object(self):
         """Test save_plot with Path object instead of string"""
-        from mnist_recognizer.utils import save_plot
+        from mnist_recognizer import save_plot
 
         fig, ax = plt.subplots()
         ax.plot([1, 2, 3])
@@ -386,7 +386,7 @@ class TestPrintFunctions(unittest.TestCase):
     @patch("builtins.print")
     def test_print_training_header(self, mock_print):
         """Test print_training_header function"""
-        from mnist_recognizer.utils import print_training_header
+        from mnist_recognizer import print_training_header
 
         print_training_header()
 
@@ -403,7 +403,7 @@ class TestPrintFunctions(unittest.TestCase):
     @patch("builtins.print")
     def test_print_success_message(self, mock_print):
         """Test print_success_message function"""
-        from mnist_recognizer.utils import print_success_message
+        from mnist_recognizer import print_success_message
 
         accuracy = 0.9876
         model_path = Path("/path/to/model.pkl")
@@ -423,7 +423,7 @@ class TestPrintFunctions(unittest.TestCase):
     @patch("builtins.print")
     def test_print_success_message_string_path(self, mock_print):
         """Test print_success_message with string path"""
-        from mnist_recognizer.utils import print_success_message
+        from mnist_recognizer import print_success_message
 
         accuracy = 0.5
         model_path = "models/test_model.pkl"
@@ -437,7 +437,7 @@ class TestPrintFunctions(unittest.TestCase):
     @patch("builtins.print")
     def test_print_success_message_accuracy_formatting(self, mock_print):
         """Test that accuracy is formatted to 4 decimal places"""
-        from mnist_recognizer.utils import print_success_message
+        from mnist_recognizer import print_success_message
 
         test_cases = [
             (0.123456789, "0.1235"),
@@ -472,7 +472,7 @@ class TestUtilsIntegration(unittest.TestCase):
 
     def test_create_digit_and_save_plot_integration(self):
         """Test creating a digit image and saving it as a plot"""
-        from mnist_recognizer.utils import create_test_digit, save_plot
+        from mnist_recognizer import create_test_digit, save_plot
 
         # Create a test digit
         img = create_test_digit(digit=7)
@@ -493,7 +493,7 @@ class TestUtilsIntegration(unittest.TestCase):
 
     def test_workflow_simulation(self):
         """Test a complete workflow using multiple utils functions"""
-        from mnist_recognizer.utils import (
+        from mnist_recognizer import (
             print_training_header,
             ensure_directory,
             create_test_digit,

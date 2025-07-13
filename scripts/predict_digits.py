@@ -13,7 +13,7 @@ import argparse
 # Add the src directory to the path so we can import the inference module
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
-from mnist_recognizer.inference import MNISTPredictor
+from mnist_recognizer import MNISTPredictor
 
 
 def parse_arguments():

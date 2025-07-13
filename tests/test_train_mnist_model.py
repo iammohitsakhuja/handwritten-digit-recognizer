@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import the actual training class and script parser
 from scripts.train_mnist_model import parse_arguments
-from src.mnist_recognizer.training import MNISTTrainer
+from src.mnist_recognizer import MNISTTrainer
 
 
 class TestTrainMnistModel(unittest.TestCase):
@@ -120,7 +120,7 @@ class TestTrainMnistModel(unittest.TestCase):
         """Test that MNISTTrainer save_model creates output directory."""
         # This test would need a trained model, which requires full training
         # Testing directory creation logic instead by importing ensure_directory
-        from src.mnist_recognizer.utils import ensure_directory
+        from src.mnist_recognizer import ensure_directory
 
         test_dir = self.temp_path / "test_models"
 

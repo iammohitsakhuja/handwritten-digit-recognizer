@@ -13,7 +13,7 @@ from pathlib import Path
 # Add the src directory to the Python path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
-from mnist_recognizer.training import MNISTTrainer
+from mnist_recognizer import MNISTTrainer
 
 
 def parse_arguments():

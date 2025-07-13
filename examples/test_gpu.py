@@ -18,7 +18,7 @@ def test_gpu_detection():
     print("=" * 30)
 
     try:
-        from mnist_recognizer.utils import setup_device
+        from mnist_recognizer import setup_device
 
         device = setup_device()
         print(f"✅ Device setup successful: {device}")
