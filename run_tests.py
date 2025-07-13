@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test Runner for MNIST Handwritten Digit Recognition Project
+Test Runner for Handwritten Digit Recognizer Project
 
 This script runs all tests for the project and provides detailed output.
 """
@@ -152,7 +152,7 @@ def main():
         list_available_tests()
         return
 
-    print("🧪 MNIST Digit Recognition - Test Suite")
+    print("🧪 Handwritten Digit Recognizer - Test Suite")
     print("=" * 50)
 
     # Adjust pattern for quick mode

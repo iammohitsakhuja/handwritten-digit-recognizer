@@ -170,7 +170,7 @@ class MNISTTrainer:
         # Show confusion matrix
         print("Confusion Matrix:")
         interp.plot_confusion_matrix(figsize=(8, 8))
-        plt.title("MNIST Digit Recognition - Confusion Matrix")
+        plt.title("Handwritten Digit Recognizer - Confusion Matrix")
         plt.tight_layout()
 
         if save_plots:
@@ -185,7 +185,7 @@ class MNISTTrainer:
         # Show top losses (worst predictions)
         print("Analyzing worst predictions...")
         interp.plot_top_losses(9, nrows=3, figsize=(12, 8))
-        plt.suptitle("MNIST Digit Recognition - Worst Predictions")
+        plt.suptitle("Handwritten Digit Recognizer - Worst Predictions")
         plt.tight_layout()
 
         if save_plots:

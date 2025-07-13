@@ -382,9 +382,7 @@ class TestPrintFunctions(unittest.TestCase):
 
         # Check the content of the calls
         calls = [call[0][0] for call in mock_print.call_args_list]
-        self.assertEqual(
-            calls[0], "Starting MNIST Handwritten Digit Recognition Training"
-        )
+        self.assertEqual(calls[0], "Starting Handwritten Digit Recognizer Training")
         self.assertEqual(calls[1], "=" * 60)
 
     @patch("builtins.print")

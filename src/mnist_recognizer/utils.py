@@ -123,7 +123,7 @@ def save_plot(fig, path, filename, dpi=150):
 
 def print_training_header():
     """Print a formatted header for training"""
-    print("Starting MNIST Handwritten Digit Recognition Training")
+    print("Starting Handwritten Digit Recognizer Training")
     print("=" * 60)
 
 

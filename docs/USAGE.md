@@ -1,6 +1,6 @@
-# MNIST Digit Recognition - Command Line Usage Guide
+# Handwritten Digit Recognizer - Command Line Usage Guide
 
-This guide describes how to use the command-line interface for the MNIST handwritten digit recognition project.
+This guide describes how to use the command-line interface for the Handwritten Digit Recognizer project.
 
 ## Scripts Overview
 

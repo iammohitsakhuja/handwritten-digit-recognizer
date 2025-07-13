@@ -1,4 +1,4 @@
-# MNIST Handwritten Digit Recognition
+# Handwritten Digit Recognizer
 
 A FastAI-based handwritten digit recognition system for classifying handwritten digits. The project includes training scripts, inference tools, comprehensive testing, and GPU acceleration support.
 

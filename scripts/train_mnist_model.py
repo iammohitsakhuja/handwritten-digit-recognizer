@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MNIST Handwritten Digit Recognition using FastAI
+Handwritten Digit Recognizer using FastAI
 
 This script trains a convolutional neural network to recognize handwritten digits
 from the MNIST dataset using the FastAI library.

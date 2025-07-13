@@ -1,5 +1,5 @@
 """
-MNIST Handwritten Digit Recognition Package
+MNIST Handwritten Digit Recognizer Package
 
 A FastAI-based implementation for training and inference of handwritten digit recognition models.
 """

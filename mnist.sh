@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# MNIST Digit Recognition - Easy Setup and Training Script
+# Handwritten Digit Recognizer - Easy Setup and Training Script
 # This script makes it easy to set up the environment and train the model
 
 set -e
 
-echo "🔢 MNIST Handwritten Digit Recognition"
+echo "🔢 Handwritten Digit Recognizer"
 echo "======================================"
 
 # Check if we're in a virtual environment or if .venv exists

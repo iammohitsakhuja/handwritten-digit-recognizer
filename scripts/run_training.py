@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quick Start Script for MNIST Digit Recognition
+Quick Start Script for Handwritten Digit Recognizer
 
 This script provides a simple way to train and save the MNIST digit recognition model.
 """
@@ -58,7 +58,7 @@ def main():
     args = parse_arguments()
 
     if not args.quiet:
-        print("🚀 Starting MNIST Digit Recognition Training")
+        print("🚀 Starting Handwritten Digit Recognizer Training")
         print("=" * 50)
         if args.fast:
             print("⚡ Fast training mode enabled")

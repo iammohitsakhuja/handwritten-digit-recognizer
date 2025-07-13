@@ -1,1 +1,1 @@
-# Tests for MNIST Handwritten Digit Recognition Project
+# Tests for Handwritten Digit Recognizer Project
