@@ -27,6 +27,7 @@ if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     echo "  demo-gpu       Show GPU detection and capabilities"
     echo "  test-gpu       Test GPU functionality"
     echo "  notebook       Launch Jupyter notebook tutorial"
+    echo "  clean          Clean output and model directories"
     echo "  help           Show detailed help for individual scripts"
     echo ""
     echo "Examples:"
@@ -37,6 +38,7 @@ if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     echo "  $0 demo-gpu                # Check GPU support"
     echo "  $0 test-gpu                # Test GPU functionality"
     echo "  $0 notebook                # Open interactive tutorial"
+    echo "  $0 clean                   # Clean output and model files"
     echo "  $0 help train              # Show training script help"
     echo "  $0 help predict            # Show prediction script help"
     echo "  $0 help run                # Show run training script help"
@@ -81,6 +83,30 @@ case "$COMMAND" in
     "notebook")
         echo "📓 Launching Jupyter notebook..."
         jupyter notebook notebooks/mnist_digit_recognition.ipynb
+        ;;
+
+    "clean")
+        echo "🧹 Cleaning output and model directories..."
+
+        # Clean the out directory
+        if [[ -d "out" ]]; then
+            echo "  Removing contents of 'out' directory..."
+            rm -rf out/*
+            echo "  ✅ Cleaned 'out' directory"
+        else
+            echo "  ℹ️  'out' directory does not exist"
+        fi
+
+        # Clean the models directory
+        if [[ -d "models" ]]; then
+            echo "  Removing contents of 'models' directory..."
+            rm -rf models/*
+            echo "  ✅ Cleaned 'models' directory"
+        else
+            echo "  ℹ️  'models' directory does not exist"
+        fi
+
+        echo "🎉 Cleanup complete!"
         ;;
 
     "help")

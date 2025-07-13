@@ -56,6 +56,9 @@ The `mnist.sh` script provides easy access to all functionality:
 # Run prediction demo
 ./mnist.sh predict
 
+# Clean output and model files
+./mnist.sh clean
+
 # Show help
 ./mnist.sh --help
 ```

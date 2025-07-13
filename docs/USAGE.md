@@ -4,6 +4,12 @@ This guide describes how to use the command-line interface for the Handwritten D
 
 ## Scripts Overview
 
+### Main Interface
+
+- `mnist.sh` - Main script providing easy access to all functionality (training, prediction, cleanup, etc.)
+
+### Python Scripts
+
 All Python scripts are located in the `scripts/` directory and include comprehensive command-line argument parsing:
 
 - `scripts/train_mnist_model.py` - Main training script with full control over training parameters
@@ -182,7 +188,21 @@ python scripts/predict_digits.py --demo --no-plots
 The scripts will create the following files and directories:
 
 - `models/` - Trained model files (.pkl and .pth)
-- Various plot images (confusion matrix, predictions, etc.)
+- `out/` - Various plot images (confusion matrix, predictions, etc.)
 - Console output with training progress and results
 
 All output locations can be customized using the command-line arguments.
+
+## Cleanup
+
+To clean up generated files and start fresh:
+
+```bash
+# Using the main script interface
+./mnist.sh clean
+
+# Manual cleanup
+rm -rf models/* out/*
+```
+
+The clean command removes all contents from the `models/` and `out/` directories while preserving the directory structure.
