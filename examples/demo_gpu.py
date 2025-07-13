@@ -9,6 +9,7 @@ functionality added to the MNIST training pipeline.
 import torch
 import sys
 from pathlib import Path
+import psutil
 
 # Add current directory to path
 sys.path.append(str(Path(__file__).parent))
@@ -98,19 +99,66 @@ def demo_gpu_detection():
     # Step 4: Training recommendations
     print("4️⃣ Training Recommendations:")
 
+    # Get device-specific recommendations
     if device.type == "cuda":
+        # Get GPU memory info
+        gpu_memory_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+
+        # Calculate optimal batch size based on GPU memory
+        if gpu_memory_gb >= 8:
+            recommended_batch_size = "128-256"
+            training_time = "20-40 seconds"
+        elif gpu_memory_gb >= 4:
+            recommended_batch_size = "64-128"
+            training_time = "30-60 seconds"
+        else:
+            recommended_batch_size = "32-64"
+            training_time = "45-90 seconds"
+
         print("   • CUDA GPU detected - optimal for training")
-        print("   • Recommended batch size: 64-128")
-        print("   • Expected training time: ~30-60 seconds per epoch")
+        print(f"   • GPU Memory: {gpu_memory_gb:.1f} GB")
+        print(f"   • Recommended batch size: {recommended_batch_size}")
+        print(f"   • Expected training time: {training_time} per epoch")
+
     elif device.type == "mps":
+        # MPS shares system memory, estimate based on available RAM
+        system_memory_gb = psutil.virtual_memory().total / (1024**3)
+
+        if system_memory_gb >= 16:
+            recommended_batch_size = "64-128"
+            training_time = "1-2 minutes"
+        elif system_memory_gb >= 8:
+            recommended_batch_size = "32-64"
+            training_time = "1.5-3 minutes"
+        else:
+            recommended_batch_size = "16-32"
+            training_time = "2-4 minutes"
+
         print("   • Apple MPS detected - good for training")
-        print("   • Recommended batch size: 32-64")
-        print("   • Expected training time: ~1-2 minutes per epoch")
+        print(f"   • System Memory: {system_memory_gb:.1f} GB")
+        print(f"   • Recommended batch size: {recommended_batch_size}")
+        print(f"   • Expected training time: {training_time} per epoch")
         print("   • Note: Some operations may fallback to CPU")
+
     else:
+        # CPU performance depends on cores and memory
+        cpu_cores = psutil.cpu_count(logical=False)
+        system_memory_gb = psutil.virtual_memory().total / (1024**3)
+
+        if cpu_cores >= 8 and system_memory_gb >= 16:
+            recommended_batch_size = "32-64"
+            training_time = "3-6 minutes"
+        elif cpu_cores >= 4 and system_memory_gb >= 8:
+            recommended_batch_size = "16-32"
+            training_time = "5-10 minutes"
+        else:
+            recommended_batch_size = "8-16"
+            training_time = "8-15 minutes"
+
         print("   • CPU only - training will be slower")
-        print("   • Recommended batch size: 16-32")
-        print("   • Expected training time: ~5-10 minutes per epoch")
+        print(f"   • CPU Cores: {cpu_cores}, Memory: {system_memory_gb:.1f} GB")
+        print(f"   • Recommended batch size: {recommended_batch_size}")
+        print(f"   • Expected training time: {training_time} per epoch")
         print("   • Consider cloud GPU services for faster training")
 
     print()
