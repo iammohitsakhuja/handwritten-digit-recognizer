@@ -16,9 +16,7 @@ from .utils import (
     print_success_message,
     create_test_digit,
     get_safe_learning_rate,
-    ensure_mps_float32_compatibility,
-    patch_fastai_for_mps,
-    unpatch_fastai_tensor,
+    get_inference_device,
 )
 
 
@@ -61,17 +59,8 @@ class MNISTTrainer:
             ],
             bs=self.batch_size,
             device=self.device,
-            num_workers=(0 if self.device and str(self.device) == "mps" else 2),
+            num_workers=2,
         )
-
-        # For MPS, manually move data loaders to device after creation
-        if self.device and str(self.device) == "mps":
-            print("🔧 Moving data loaders to MPS device...")
-            self.dls = self.dls.to(self.device)
-
-            # Ensure all data is float32 for MPS compatibility
-            print("🔧 Ensuring data loaders use float32 for MPS compatibility...")
-            torch.set_default_dtype(torch.float32)
 
         print(f"Training samples: {len(self.dls.train_ds)}")
         print(f"Validation samples: {len(self.dls.valid_ds)}")
@@ -101,12 +90,6 @@ class MNISTTrainer:
         if self.device:
             print(f"🔧 Model will use device: {self.device}")
 
-            # For MPS, ensure all tensors are float32
-            if str(self.device) == "mps":
-                print("🔧 Ensuring model uses float32 for MPS compatibility...")
-                # Use the utility function to ensure float32 compatibility
-                self.learn.model = ensure_mps_float32_compatibility(self.learn.model)
-
             # Show GPU memory usage if CUDA
             if self.device.type == "cuda":
                 torch.cuda.empty_cache()
@@ -130,134 +113,31 @@ class MNISTTrainer:
         if learning_rate is None:
             print("Finding optimal learning rate...")
             try:
-                if str(self.device) == "mps":
-                    print("⚠️  MPS device detected, using CPU for lr_find")
-                    # Temporarily move model to CPU for lr_find compatibility with MPS
-                    original_device = self.device
-                    self.learn.model.cpu()
-
-                    # Set default device to CPU to avoid MPS issues during lr_find
-                    torch.set_default_device("cpu")
-
-                    # Find learning rate on CPU (MPS has compatibility issues with lr_find)
-                    (learning_rate,) = self.learn.lr_find()
-
-                    # Restore original device settings
-                    torch.set_default_device(original_device)
-                    self.learn.model.to(
-                        original_device
-                    )  # Move model back to original device
-                else:
-                    learning_rate = self.learn.lr_find()
+                learning_rate = self.learn.lr_find()
                 print(f"\nSuggested learning rate: {learning_rate}")
             except Exception as e:
-                # Handle MPS/GPU compatibility issues with lr_find
-                if (
-                    "mps" in str(e).lower()
-                    or "numpy" in str(e).lower()
-                    or "can't convert" in str(e).lower()
-                ):
-                    print(
-                        f"⚠️  Learning rate finder not compatible with {self.device}: {str(e)}"
-                    )
-                    print(
-                        "� This is a known issue with MPS devices and FastAI's lr_find visualization"
-                    )
-                    learning_rate = get_safe_learning_rate(self.device)
-                    print(f"Using device-optimized learning rate: {learning_rate}")
-                    print(
-                        "💡 Tip: You can specify --learning-rate manually for custom control"
-                    )
-                else:
-                    print(f"⚠️  Learning rate finder failed: {str(e)}")
-                    learning_rate = get_safe_learning_rate(self.device)
-                    print(f"Using fallback learning rate: {learning_rate}")
+                print(f"⚠️  Learning rate finder failed: {str(e)}")
+                learning_rate = get_safe_learning_rate(self.device)
+                print(f"Using fallback learning rate: {learning_rate}")
         else:
             print(f"Using provided learning rate: {learning_rate}")
 
         # Train the model
         start_time = time.time()
         try:
-            # Handle MPS-specific issues during training
-            if self.device and str(self.device) == "mps":
-                # For MPS, ensure everything stays in float32
-                print("🔧 Using MPS-compatible training approach...")
-
-                # Apply FastAI patches for MPS compatibility
-                original_tensor = patch_fastai_for_mps()
-
-                try:
-                    # Set global PyTorch defaults for MPS
-                    torch.set_default_dtype(torch.float32)
-                    torch.set_default_device(self.device)
-
-                    # Ensure all tensors are float32 using utility function
-                    self.learn.model = ensure_mps_float32_compatibility(
-                        self.learn.model
-                    )
-
-                    # For MPS, use fit_one_cycle instead of fine_tune to avoid scheduler issues
-                    print("🔧 Training with float32 tensors on MPS...")
-                    self.learn.fit_one_cycle(epochs, lr_max=learning_rate)
-
-                finally:
-                    # Always restore original tensor function
-                    unpatch_fastai_tensor(original_tensor)
-
-            else:
-                # Standard training for CUDA/CPU
-                self.learn.fine_tune(epochs, base_lr=learning_rate)
+            # Use fine_tune for all devices (CUDA/CPU)
+            print("🚀 Starting training...")
+            self.learn.fine_tune(epochs, base_lr=learning_rate)
 
         except Exception as e:
-            # Check if this is still an MPS float64 conversion error
-            if "Cannot convert a MPS Tensor to float64" in str(e):
-                print(
-                    "⚠️  MPS float64 conversion error detected. Trying CPU fallback..."
-                )
-                print(
-                    "⚠️  This appears to be a deep FastAI compatibility issue with MPS"
-                )
+            # Print stack trace for debugging errors
+            import traceback
 
-                # As a last resort, move to CPU for training but keep model on MPS for inference
-                print(
-                    "🔧 Moving to CPU for training, will move back to MPS afterward..."
-                )
-
-                # Save original device
-                original_device = self.device
-
-                # Move everything to CPU
-                self.device = torch.device("cpu")
-                torch.set_default_device("cpu")
-                torch.set_default_dtype(torch.float32)
-
-                # Move model and data to CPU
-                self.learn.model = self.learn.model.cpu()
-                self.learn.dls = self.learn.dls.cpu()
-
-                # Train on CPU
-                print("🔧 Training on CPU...")
-                self.learn.fit_one_cycle(epochs, lr_max=learning_rate)
-
-                # Move model back to MPS for inference
-                print("🔧 Moving trained model back to MPS for inference...")
-                self.device = original_device
-                self.learn.model = self.learn.model.to(self.device)
-
-                print(
-                    "✅ Training completed on CPU, model available on MPS for inference"
-                )
-
-            else:
-                # Print stack trace for debugging other errors
-                import traceback
-
-                print("⚠️  Exception occurred during training:")
-                traceback.print_exc()
-                raise e
+            print("⚠️  Exception occurred during training:")
+            traceback.print_exc()
+            raise e
 
         training_time = time.time() - start_time
-
         print(f"Training completed in {training_time:.2f} seconds")
         return self.learn
 
@@ -473,8 +353,10 @@ class MNISTTrainer:
         img_tensor = transform(img_rgb).unsqueeze(0)
 
         with torch.no_grad():
-            if self.device:
-                img_tensor = img_tensor.to(self.device)
+            # Use inference device if available, otherwise use training device
+            device_to_use = getattr(self, "inference_device", self.device)
+            if device_to_use:
+                img_tensor = img_tensor.to(device_to_use)
             pred = self.learn.model(img_tensor)
             return torch.argmax(pred, dim=1).item()
 
@@ -505,6 +387,11 @@ class MNISTTrainer:
         self.create_model()
         self.train_model(epochs=epochs, learning_rate=learning_rate)
 
+        # Move model to best inference device (may use MPS if available)
+        inference_device = self.move_to_inference_device()
+        if inference_device != self.device:
+            print(f"✅ Model moved to {inference_device} for inference")
+
         # Save model
         model_path = self.save_model(model_name=model_name, output_dir=models_dir)
 
@@ -528,3 +415,19 @@ class MNISTTrainer:
         print_success_message(accuracy, model_path)
 
         return accuracy, model_path
+
+    def move_to_inference_device(self):
+        """Move the trained model to the best available device for inference (can use MPS)"""
+        if self.learn is None:
+            raise ValueError("Model not trained. Call train_model() first.")
+
+        inference_device = get_inference_device()
+        if inference_device != self.device:
+            print(f"🔧 Moving model to {inference_device} for faster inference...")
+            self.learn.model = self.learn.model.to(inference_device)
+            # Update the device reference for inference methods
+            self.inference_device = inference_device
+        else:
+            self.inference_device = self.device
+
+        return self.inference_device

@@ -225,9 +225,19 @@ The test suite includes:
 
 The training pipeline automatically detects and uses the best available device:
 
-- **NVIDIA CUDA GPUs** - Optimal performance (30-60 seconds per epoch)
-- **Apple Metal Performance Shaders (MPS)** - Good performance on Apple Silicon Macs (1-2 minutes per epoch)
-- **CPU Fallback** - Works everywhere (5-10 minutes per epoch)
+- **NVIDIA CUDA GPUs** - Optimal performance for training and inference (30-60 seconds per epoch)
+- **Apple Metal Performance Shaders (MPS)** - Used for inference only on Apple Silicon Macs
+- **CPU Fallback** - Works everywhere for training and inference (5-10 minutes per epoch)
+
+### Device Strategy
+
+- **Training**: Uses CUDA if available, otherwise CPU (for maximum compatibility)
+- **Inference**: Uses the best available device (CUDA > MPS > CPU) for optimal performance
+
+On Apple Silicon Macs:
+- Training runs on CPU for compatibility
+- After training, the model is automatically moved to MPS for faster inference
+- This approach avoids FastAI compatibility issues while still getting performance benefits
 
 ### Check GPU Status
 
@@ -238,13 +248,13 @@ python demo_gpu.py
 
 ### GPU Training
 
-No special commands needed - GPU detection is automatic:
+No special commands needed - device detection is automatic:
 
 ```bash
-# Will automatically use GPU if available
+# Will automatically use the best training device
 ./train_mnist_model.py --epochs 5 --batch-size 64
 
-# Quick training on GPU
+# Quick training
 python run_training.py --epochs 3 --fast
 ```
 
@@ -253,7 +263,9 @@ The system will show device information when training starts:
 ```
 Configuring device...
 ✅ Apple Metal Performance Shaders (MPS) detected
-🔧 Using device: mps
+⚠️  Note: MPS has compatibility issues with FastAI training
+🔧 Using CPU for training, MPS for inference
+🔧 Training device: cpu
 ```
 
 For detailed GPU information, see [GPU_SUPPORT.md](GPU_SUPPORT.md).
