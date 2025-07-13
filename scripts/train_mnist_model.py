@@ -58,7 +58,11 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--plot-dir", "-p", type=str, default=".", help="Directory to save plot images"
+        "--plot-dir",
+        "-p",
+        type=str,
+        default="out",
+        help="Directory to save plot images",
     )
 
     # Control flags

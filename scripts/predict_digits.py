@@ -47,7 +47,7 @@ def parse_arguments():
         "--output-dir",
         "-o",
         type=str,
-        default=".",
+        default="out",
         help="Directory to save output plots",
     )
 

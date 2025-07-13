@@ -193,6 +193,7 @@ mlruns/
 plots/
 figures/
 visualizations/
+out/
 
 # Logs and temporary files
 *.log

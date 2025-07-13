@@ -79,7 +79,7 @@ def main():
                 epochs=args.epochs,
                 model_name=args.model_name,
                 save_plots=False,  # No plots in fast mode
-                output_dir=".",
+                output_dir="out",
                 models_dir="models",
                 test_synthetic=False,  # Skip synthetic testing in fast mode
                 run_evaluation=True,  # Keep evaluation for accuracy
@@ -91,7 +91,7 @@ def main():
                 epochs=args.epochs,
                 model_name=args.model_name,
                 save_plots=not args.quiet,  # No plots if quiet
-                output_dir=".",
+                output_dir="out",
                 models_dir="models",
                 test_synthetic=True,
                 run_evaluation=True,

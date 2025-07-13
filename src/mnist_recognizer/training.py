@@ -157,7 +157,7 @@ class MNISTTrainer:
         print(f"Training completed in {training_time:.2f} seconds")
         return self.learn
 
-    def evaluate_model(self, save_plots=True, output_dir="."):
+    def evaluate_model(self, save_plots=True, output_dir="out"):
         """Evaluate the trained model"""
         if self.learn is None:
             raise ValueError("Model not trained. Call train_model() first.")
@@ -226,7 +226,7 @@ class MNISTTrainer:
 
         return model_path
 
-    def show_sample_data(self, save_plots=True, output_dir="."):
+    def show_sample_data(self, save_plots=True, output_dir="out"):
         """Show sample training data"""
         if self.dls is None:
             raise ValueError("Data loaders not set up. Call setup_data() first.")
@@ -241,7 +241,7 @@ class MNISTTrainer:
 
         plt.show()
 
-    def test_predictions(self, save_plots=True, output_dir="."):
+    def test_predictions(self, save_plots=True, output_dir="out"):
         """Test the model with some sample predictions"""
         if self.learn is None or self.dls is None:
             raise ValueError("Model and data not ready. Complete training first.")
@@ -282,7 +282,7 @@ class MNISTTrainer:
 
         plt.show()
 
-    def test_synthetic_digits(self, save_plots=True, output_dir="."):
+    def test_synthetic_digits(self, save_plots=True, output_dir="out"):
         """Test the model with synthetic test digits created by utils.py"""
         if self.learn is None:
             raise ValueError("Model not trained. Call train_model() first.")
@@ -382,7 +382,7 @@ class MNISTTrainer:
         learning_rate=None,
         model_name="mnist_digit_recognizer",
         save_plots=True,
-        output_dir=".",
+        output_dir="out",
         models_dir="models",
         test_synthetic=True,
         run_evaluation=True,

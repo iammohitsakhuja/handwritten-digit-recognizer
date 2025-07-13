@@ -80,7 +80,7 @@ class TestPredictDigits(unittest.TestCase):
             self.assertIsNone(args.image)
             self.assertIsNone(args.images)
             self.assertFalse(args.demo)
-            self.assertEqual(args.output_dir, ".")
+            self.assertEqual(args.output_dir, "out")
             self.assertFalse(args.no_plots)
             self.assertFalse(args.visualize)
         finally:

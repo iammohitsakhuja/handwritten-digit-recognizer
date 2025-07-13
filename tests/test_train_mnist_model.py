@@ -50,7 +50,7 @@ class TestTrainMnistModel(unittest.TestCase):
             self.assertIsNone(args.learning_rate)
             self.assertEqual(args.model_name, "mnist_digit_recognizer")
             self.assertEqual(args.output_dir, "models")
-            self.assertEqual(args.plot_dir, ".")
+            self.assertEqual(args.plot_dir, "out")
             self.assertFalse(args.no_plots)
             self.assertFalse(args.no_evaluation)
             self.assertFalse(args.no_predictions)

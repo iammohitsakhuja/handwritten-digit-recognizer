@@ -15,6 +15,7 @@ handwritten-digit-recognizer/
 ├── run_training.py                # Quick start training script (executable)
 ├── mnist_digit_recognition.ipynb  # Interactive Jupyter notebook
 ├── models/                        # Saved models directory
+├── out/                           # Output artifacts directory (plots, visualizations)
 ├── tests/                         # Test suite directory
 │   ├── test_train_mnist_model.py  # Training module tests
 │   ├── test_predict_digits.py     # Prediction module tests

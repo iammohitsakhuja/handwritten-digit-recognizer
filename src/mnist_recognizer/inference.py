@@ -103,6 +103,8 @@ class MNISTPredictor:
             img = Image.fromarray(image_path_or_array).convert("L")
         elif isinstance(image_path_or_array, Image.Image):
             img = image_path_or_array.convert("L")
+        else:
+            raise ValueError(f"Unsupported image type: {type(image_path_or_array)}")
 
         # Create visualization
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
@@ -130,7 +132,7 @@ class MNISTPredictor:
         plt.show()
         return fig
 
-    def demo_predictions(self, save_plots=True, output_dir="."):
+    def demo_predictions(self, save_plots=True, output_dir="out"):
         """Demonstrate model predictions with generated test images"""
         print("Running prediction demo with generated test images...")
 
@@ -179,7 +181,7 @@ class MNISTPredictor:
         return results
 
     def predict_single_with_output(
-        self, image_path, visualize=False, save_plots=True, output_dir="."
+        self, image_path, visualize=False, save_plots=True, output_dir="out"
     ):
         """
         Predict a single image with detailed console output and optional visualization
@@ -216,7 +218,7 @@ class MNISTPredictor:
             return None, None
 
     def predict_multiple_with_summary(
-        self, image_paths, save_plots=True, output_dir="."
+        self, image_paths, save_plots=True, output_dir="out"
     ):
         """
         Predict multiple images with summary visualization
