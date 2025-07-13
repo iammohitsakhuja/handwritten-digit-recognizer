@@ -152,13 +152,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be added to the global gitignore or merged into this project gitignore.  For a PyCharm
-#  project, it is recommended to generate project-specific .gitignore files.
-#  https://www.jetbrains.com/help/pycharm/
-.idea/
-
 # FastAI specific
 .fastai/
 models/
@@ -216,14 +209,6 @@ tmp/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# VS Code
-.vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
 
 # Vim
 *.swp
