@@ -45,7 +45,7 @@ def demo_gpu_detection():
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         device = torch.device("mps")
         device_type = "Apple Metal Performance Shaders"
-        performance = "⚡ Very Good (MPS)"
+        performance = "⚡ Good for inference (CPU used for training)"
     else:
         device = torch.device("cpu")
         device_type = "CPU"
@@ -134,11 +134,12 @@ def demo_gpu_detection():
             recommended_batch_size = "16-32"
             training_time = "2-4 minutes"
 
-        print("   • Apple MPS detected - good for training")
+        print("   • Apple MPS detected - available for inference")
         print(f"   • System Memory: {system_memory_gb:.1f} GB")
         print(f"   • Recommended batch size: {recommended_batch_size}")
         print(f"   • Expected training time: {training_time} per epoch")
-        print("   • Note: Some operations may fallback to CPU")
+        print("   • Note: Training will use CPU for stability, MPS for inference")
+        print("   • This ensures compatibility with FastAI training pipeline")
 
     else:
         # CPU performance depends on cores and memory
@@ -162,10 +163,14 @@ def demo_gpu_detection():
         print("   • Consider cloud GPU services for faster training")
 
     print()
-    print("🎯 To start training with GPU support:")
+    print("🎯 To start training with optimized device usage:")
     print("   python train_mnist_model.py --epochs 5 --batch-size 64")
     print()
-    print("🔍 The script will automatically detect and use the best available device!")
+    print("🔍 The script will automatically:")
+    print("   • Use CUDA GPU for training (if available)")
+    print("   • Use CPU for training on Apple Silicon (for stability)")
+    print("   • Move models to MPS for faster inference (if available)")
+    print("   • Fallback to CPU for both training and inference otherwise")
 
 
 if __name__ == "__main__":
