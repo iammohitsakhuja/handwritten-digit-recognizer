@@ -113,7 +113,7 @@ class MNISTTrainer:
         if learning_rate is None:
             print("Finding optimal learning rate...")
             try:
-                learning_rate = self.learn.lr_find()
+                (learning_rate,) = self.learn.lr_find()
                 print(f"\nSuggested learning rate: {learning_rate}")
             except Exception as e:
                 print(f"⚠️  Learning rate finder failed: {str(e)}")
