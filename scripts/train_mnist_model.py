@@ -96,7 +96,7 @@ def main():
 
     try:
         # Initialize trainer
-        trainer = MNISTTrainer(batch_size=args.batch_size)
+        trainer = MNISTTrainer(batch_size=args.batch_size, seed=args.seed)
 
         # Use the unified training pipeline with configurable components
         accuracy, model_path = trainer.full_training_pipeline(

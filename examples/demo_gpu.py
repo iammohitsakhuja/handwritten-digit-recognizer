@@ -45,7 +45,7 @@ def demo_gpu_detection():
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         device = torch.device("mps")
         device_type = "Apple Metal Performance Shaders"
-        performance = "⚡ Good for inference (CPU used for training)"
+        performance = "⚡ Very Good (MPS for training and inference)"
     else:
         device = torch.device("cpu")
         device_type = "CPU"
@@ -134,12 +134,12 @@ def demo_gpu_detection():
             recommended_batch_size = "16-32"
             training_time = "2-4 minutes"
 
-        print("   • Apple MPS detected - available for inference")
+        print("   • Apple MPS detected - excellent for training and inference")
         print(f"   • System Memory: {system_memory_gb:.1f} GB")
         print(f"   • Recommended batch size: {recommended_batch_size}")
         print(f"   • Expected training time: {training_time} per epoch")
-        print("   • Note: Training will use CPU for stability, MPS for inference")
-        print("   • This ensures compatibility with FastAI training pipeline")
+        print("   • Note: MPS provides accelerated training and inference")
+        print("   • Modern FastAI/PyTorch versions work well with MPS")
 
     else:
         # CPU performance depends on cores and memory
@@ -168,8 +168,7 @@ def demo_gpu_detection():
     print()
     print("🔍 The script will automatically:")
     print("   • Use CUDA GPU for training (if available)")
-    print("   • Use CPU for training on Apple Silicon (for stability)")
-    print("   • Move models to MPS for faster inference (if available)")
+    print("   • Use MPS for both training and inference on Apple Silicon")
     print("   • Fallback to CPU for both training and inference otherwise")
 
 

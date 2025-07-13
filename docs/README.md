@@ -226,18 +226,18 @@ The test suite includes:
 The training pipeline automatically detects and uses the best available device:
 
 - **NVIDIA CUDA GPUs** - Optimal performance for training and inference (30-60 seconds per epoch)
-- **Apple Metal Performance Shaders (MPS)** - Used for inference only on Apple Silicon Macs
+- **Apple Metal Performance Shaders (MPS)** - Used for both training and inference on Apple Silicon Macs
 - **CPU Fallback** - Works everywhere for training and inference (5-10 minutes per epoch)
 
 ### Device Strategy
 
-- **Training**: Uses CUDA if available, otherwise CPU (for maximum compatibility)
+- **Training**: Uses CUDA if available, otherwise MPS on Apple Silicon, otherwise CPU
 - **Inference**: Uses the best available device (CUDA > MPS > CPU) for optimal performance
 
 On Apple Silicon Macs:
-- Training runs on CPU for compatibility
-- After training, the model is automatically moved to MPS for faster inference
-- This approach avoids FastAI compatibility issues while still getting performance benefits
+- Training runs on MPS for excellent performance
+- Inference also uses MPS for fast predictions
+- This approach provides optimal performance with modern FastAI/PyTorch versions
 
 ### Check GPU Status
 
@@ -263,9 +263,8 @@ The system will show device information when training starts:
 ```
 Configuring device...
 ✅ Apple Metal Performance Shaders (MPS) detected
-⚠️  Note: MPS has compatibility issues with FastAI training
-🔧 Using CPU for training, MPS for inference
-🔧 Training device: cpu
+🔧 Using MPS for training and inference
+🔧 Using device: mps
 ```
 
 For detailed GPU information, see [GPU_SUPPORT.md](GPU_SUPPORT.md).

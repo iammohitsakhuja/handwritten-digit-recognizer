@@ -90,7 +90,10 @@ class TestTrainMnistModel(unittest.TestCase):
         finally:
             sys.argv = original_argv
 
-    @unittest.skipIf(not torch.cuda.is_available(), "CUDA not available")
+    @unittest.skipIf(
+        not (torch.cuda.is_available() or torch.backends.mps.is_available()),
+        "CUDA or MPS not available",
+    )
     def test_trainer_setup_data_with_small_batch(self):
         """Test MNISTTrainer setup_data method with small batch size (requires network)."""
         try:

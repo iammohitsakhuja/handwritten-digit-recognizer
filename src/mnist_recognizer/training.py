@@ -7,6 +7,7 @@ from fastai.vision.all import *
 from fastai.data.external import *
 import matplotlib.pyplot as plt
 import time
+from pathlib import Path
 
 from .utils import (
     setup_device,
@@ -23,21 +24,23 @@ from .utils import (
 class MNISTTrainer:
     """Main training class for MNIST digit recognition"""
 
-    def __init__(self, batch_size=64, device=None):
+    def __init__(self, batch_size=64, device=None, seed=42):
         """
         Initialize the MNIST trainer
 
         Args:
             batch_size (int): Batch size for training
             device (torch.device): Device to use for training
+            seed (int): Random seed for reproducibility
         """
         self.batch_size = batch_size
         self.device = device or setup_device()
+        self.seed = seed
         self.dls = None
         self.learn = None
         self._data_path = None  # Cache for dataset path
 
-    def setup_data(self, path="mnist_data"):
+    def setup_data(self):
         """Download and prepare MNIST dataset"""
         print("Setting up MNIST dataset...")
 
@@ -54,12 +57,13 @@ class MNISTTrainer:
             valid="testing",
             item_tfms=Resize(28),
             batch_tfms=[
-                *aug_transforms(size=28, min_scale=0.8),
+                *aug_transforms(
+                    size=28, min_scale=0.8, max_rotate=10.0, max_lighting=0.2
+                ),
                 Normalize.from_stats(*imagenet_stats),
             ],
             bs=self.batch_size,
-            device=self.device,
-            num_workers=2,
+            seed=self.seed,
         )
 
         print(f"Training samples: {len(self.dls.train_ds)}")
@@ -84,11 +88,14 @@ class MNISTTrainer:
             resnet18,
             metrics=[accuracy, error_rate],
             loss_func=CrossEntropyLossFlat(),
+            path=Path(".").resolve(),  # Root directory for learner
+            model_dir="models",  # Save models in 'models' directory
         )
 
         # Handle device-specific configurations
         if self.device:
             print(f"🔧 Model will use device: {self.device}")
+            self.learn.model.to(self.device)  # Move model to the specified device
 
             # Show GPU memory usage if CUDA
             if self.device.type == "cuda":
@@ -98,6 +105,14 @@ class MNISTTrainer:
                 )
                 print(
                     f"💾 GPU Memory cached: {torch.cuda.memory_reserved(self.device) / 1024**2:.1f} MB"
+                )
+            elif self.device.type == "mps":
+                # Show MPS memory usage
+                print(
+                    f"💾 MPS Memory allocated: {torch.mps.current_allocated_memory() / 1024**2:.1f} MB"
+                )
+                print(
+                    f"💾 MPS Memory recommended max: {torch.mps.recommended_max_memory() / 1024**2:.1f} MB"
                 )
 
         return self.learn
@@ -113,8 +128,9 @@ class MNISTTrainer:
         if learning_rate is None:
             print("Finding optimal learning rate...")
             try:
-                (learning_rate,) = self.learn.lr_find()
-                print(f"\nSuggested learning rate: {learning_rate}")
+                lr_find_result = self.learn.lr_find()
+                learning_rate = lr_find_result.valley
+                print(f"Suggested learning rate: {learning_rate:.6f}")
             except Exception as e:
                 print(f"⚠️  Learning rate finder failed: {str(e)}")
                 learning_rate = get_safe_learning_rate(self.device)
@@ -125,7 +141,7 @@ class MNISTTrainer:
         # Train the model
         start_time = time.time()
         try:
-            # Use fine_tune for all devices (CUDA/CPU)
+            # Use fine_tune for all devices
             print("🚀 Starting training...")
             self.learn.fine_tune(epochs, base_lr=learning_rate)
 

@@ -29,12 +29,10 @@ class TestSetupDevice(unittest.TestCase):
     @patch("torch.cuda.is_available")
     @patch("torch.cuda.get_device_name")
     @patch("torch.cuda.get_device_properties")
-    @patch("torch.set_default_device")
     @patch("builtins.print")
     def test_setup_device_cuda_available(
         self,
         mock_print,
-        mock_set_default,
         mock_get_props,
         mock_get_name,
         mock_cuda_available,
@@ -56,15 +54,11 @@ class TestSetupDevice(unittest.TestCase):
         # Verify device is set to cuda
         self.assertEqual(device.type, "cuda")
 
-        # Verify torch.set_default_device was called
-        mock_set_default.assert_called_once_with(device)
-
     @patch("torch.cuda.is_available")
     @patch.object(torch.backends, "mps", create=True)
-    @patch("torch.set_default_device")
     @patch("builtins.print")
     def test_setup_device_mps_available(
-        self, mock_print, mock_set_default, mock_mps, mock_cuda_available
+        self, mock_print, mock_mps, mock_cuda_available
     ):
         """Test setup_device when MPS is available but CUDA is not"""
         from mnist_recognizer.utils import setup_device
@@ -78,16 +72,10 @@ class TestSetupDevice(unittest.TestCase):
         # Verify device is set to mps
         self.assertEqual(device.type, "mps")
 
-        # Verify torch.set_default_device was called
-        mock_set_default.assert_called_once_with(device)
-
     @patch("torch.cuda.is_available")
-    @patch.object(torch.backends, "mps", create=True)
-    @patch("torch.set_default_device")
+    @patch.object(torch.backends, "mps", create=False)
     @patch("builtins.print")
-    def test_setup_device_cpu_fallback(
-        self, mock_print, mock_set_default, mock_mps, mock_cuda_available
-    ):
+    def test_setup_device_cpu_fallback(self, mock_print, mock_mps, mock_cuda_available):
         """Test setup_device falls back to CPU when no GPU is available"""
         from mnist_recognizer.utils import setup_device
 
@@ -100,24 +88,6 @@ class TestSetupDevice(unittest.TestCase):
 
         # Verify device is set to cpu
         self.assertEqual(device.type, "cpu")
-
-        # Verify torch.set_default_device was called
-        mock_set_default.assert_called_once_with(device)
-
-    @patch("torch.cuda.is_available")
-    @patch("torch.set_default_device")
-    def test_setup_device_sets_default(self, mock_set_default, mock_cuda_available):
-        """Test that setup_device calls torch.set_default_device"""
-        from mnist_recognizer.utils import setup_device
-
-        # Mock no GPU availability
-        mock_cuda_available.return_value = False
-
-        # Mock no MPS (by not patching it, it won't exist)
-        device = setup_device()
-
-        # Verify torch.set_default_device was called with the device
-        mock_set_default.assert_called_once_with(device)
 
 
 class TestCreateTestDigit(unittest.TestCase):

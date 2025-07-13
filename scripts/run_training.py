@@ -64,11 +64,13 @@ def main():
             print("⚡ Fast training mode enabled")
 
     try:
+        seed = 42
+
         # Set random seed for reproducibility
-        torch.manual_seed(42)
+        torch.manual_seed(seed)
 
         # Initialize trainer
-        trainer = MNISTTrainer(batch_size=args.batch_size)
+        trainer = MNISTTrainer(batch_size=args.batch_size, seed=seed)
 
         # Configure training parameters based on mode
         if args.fast:

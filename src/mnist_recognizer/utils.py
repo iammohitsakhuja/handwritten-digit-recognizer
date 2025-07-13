@@ -11,9 +11,20 @@ def setup_device():
     """Setup and configure the device (GPU/CPU) for training"""
     print("Configuring device...")
 
+    # Device setup - simplified approach for maximum compatibility
+    device_type = (
+        "cuda"
+        if torch.cuda.is_available()
+        else (
+            "mps"
+            if hasattr(torch.backends, "mps") and torch.backends.mps.is_available()
+            else "cpu"
+        )
+    )
+    device = torch.device(device_type)
+
     # Check for CUDA (NVIDIA GPU)
     if torch.cuda.is_available():
-        device = torch.device("cuda")
         device_name = torch.cuda.get_device_name(0)
         gpu_memory = torch.cuda.get_device_properties(0).total_memory / 1024**3
         print(f"✅ CUDA GPU detected: {device_name}")
@@ -24,36 +35,21 @@ def setup_device():
         torch.backends.cudnn.benchmark = True  # Optimize for consistent input sizes
         torch.backends.cudnn.deterministic = False  # Allow non-deterministic for speed
 
-        # Set default device for FastAI (CUDA works well with this)
-        torch.set_default_device(device)
-
     # Check for MPS (Apple Silicon GPU)
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         print("✅ Apple Metal Performance Shaders (MPS) detected")
-        print("⚠️  Note: MPS has compatibility issues with FastAI training")
-        print("🔧 Using CPU for training, MPS for inference")
-
-        # Use CPU for training due to FastAI compatibility issues
-        device = torch.device("cpu")
-        print(f"🔧 Training device: {device}")
-
-        # Set default device to CPU for training
-        torch.set_default_device(device)
-        torch.set_default_dtype(torch.float32)
-        print("💡 After training, models can be moved to MPS for faster inference")
+        print("🔧 Using MPS for training and inference")
+        print(f"🔧 Using device: {device}")
 
     # Fallback to CPU
     else:
-        device = torch.device("cpu")
         print("⚠️  No GPU detected, using CPU")
         print(f"🔧 Using device: {device}")
         print(
             "💡 For faster training, consider using a machine with CUDA or MPS support"
         )
 
-        # Set default device for CPU
-        torch.set_default_device(device)
-
+    print(f"Using device type: {device_type}")
     print(f"🧠 PyTorch version: {torch.__version__}")
     print()
 
@@ -151,19 +147,9 @@ def get_safe_learning_rate(device):
 
 def get_inference_device():
     """
-    Get the best device for inference (can use MPS even if training was on CPU)
+    Get the best device for inference
 
     Returns:
         torch.device: Best available device for inference
     """
-    # Check for CUDA first (best performance)
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-
-    # Check for MPS (good for inference on Apple Silicon)
-    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        return torch.device("mps")
-
-    # Fallback to CPU
-    else:
-        return torch.device("cpu")
+    return setup_device()
