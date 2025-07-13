@@ -35,9 +35,11 @@ if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     echo "  $0 train-full              # Full training with plots"
     echo "  $0 predict                 # Run prediction demo"
     echo "  $0 demo-gpu                # Check GPU support"
+    echo "  $0 test-gpu                # Test GPU functionality"
     echo "  $0 notebook                # Open interactive tutorial"
     echo "  $0 help train              # Show training script help"
     echo "  $0 help predict            # Show prediction script help"
+    echo "  $0 help run                # Show run training script help"
     echo ""
     exit 0
 fi
@@ -84,9 +86,9 @@ case "$COMMAND" in
     "help")
         if [[ $# -eq 0 ]]; then
             echo "Available help topics:"
-            echo "  help train     - Show train_mnist_model.py options"
-            echo "  help predict   - Show predict_digits.py options"
-            echo "  help run       - Show run_training.py options"
+            echo "  help train     - Show scripts/train_mnist_model.py options"
+            echo "  help predict   - Show scripts/predict_digits.py options"
+            echo "  help run       - Show scripts/run_training.py options"
         else
             case "$1" in
                 "train")
@@ -100,12 +102,6 @@ case "$COMMAND" in
                     ;;
                 *)
                     echo "Unknown help topic: $1"
-                    ;;
-            esac
-        fi
-        ;;
-                *)
-                    echo "❌ Unknown help topic: $1"
                     echo "Available topics: train, predict, run"
                     exit 1
                     ;;
