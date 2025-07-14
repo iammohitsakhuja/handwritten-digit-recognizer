@@ -10,6 +10,10 @@ import torch
 from pathlib import Path
 import argparse
 import sys
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Import modules
 sys.path.append(str(Path(__file__).parent.parent / "src"))
