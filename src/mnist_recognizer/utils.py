@@ -121,6 +121,16 @@ def save_plot(fig, path, filename, dpi=150):
     return full_path
 
 
+def save_text_file(content, path, filename):
+    """Save text content to file in specified directory"""
+    ensure_directory(path)
+    full_path = Path(path) / filename
+    with open(full_path, "w", encoding="utf-8") as f:
+        f.write(content)
+    print(f"Text file saved to: {full_path}")
+    return full_path
+
+
 def print_training_header():
     """Print a formatted header for training"""
     print("Starting Handwritten Digit Recognizer Training")

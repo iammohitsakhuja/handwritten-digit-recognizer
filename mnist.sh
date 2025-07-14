@@ -25,6 +25,7 @@ if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     echo "  train-full     Full training (10 epochs with all outputs)"
     echo "  predict        Run prediction demo"
     echo "  demo-gpu       Show GPU detection and capabilities"
+    echo "  demo-markdown  Demo new markdown model card generation"
     echo "  test-gpu       Test GPU functionality"
     echo "  notebook       Launch Jupyter notebook tutorial"
     echo "  clean          Clean output and model directories"
@@ -36,6 +37,7 @@ if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     echo "  $0 train-full              # Full training with plots"
     echo "  $0 predict                 # Run prediction demo"
     echo "  $0 demo-gpu                # Check GPU support"
+    echo "  $0 demo-markdown           # Demo markdown model card generation"
     echo "  $0 test-gpu                # Test GPU functionality"
     echo "  $0 notebook                # Open interactive tutorial"
     echo "  $0 clean                   # Clean output and model files"
@@ -73,6 +75,11 @@ case "$COMMAND" in
     "demo-gpu")
         echo "🔧 Running GPU detection demo..."
         python examples/demo_gpu.py "$@"
+        ;;
+
+    "demo-markdown")
+        echo "📝 Running markdown model card generation demo..."
+        python examples/demo_markdown_generation.py "$@"
         ;;
 
     "test-gpu")
