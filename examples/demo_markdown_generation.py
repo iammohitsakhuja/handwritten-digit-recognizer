@@ -127,7 +127,7 @@ If you use this model, please cite:
 ```bibtex
 @misc{demo_mnist_model,
     title={MNIST Handwritten Digit Recognition using FastAI},
-    author={Your Name},
+    author={Mohit Sakhuja},
     year={2025},
     publisher={Hugging Face},
     url={https://huggingface.co/your-username/demo-mnist-model}

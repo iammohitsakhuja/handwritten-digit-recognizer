@@ -85,6 +85,27 @@ class TestHuggingFaceIntegration(unittest.TestCase):
             self.assertIn("test", model_card)
             # Check that username is in the citation URL
             self.assertIn("https://huggingface.co/testuser/test-model", model_card)
+            # Check that default author name is used
+            self.assertIn("Mohit Sakhuja", model_card)
+
+    def test_create_model_card_custom_author(self):
+        """Test model card creation with custom author"""
+        with patch("src.mnist_recognizer.huggingface_hub.HfApi"):
+            uploader = HuggingFaceUploader(token="test_token")
+
+            model_card = uploader.create_model_card(
+                model_name="test-model",
+                username="testuser",
+                accuracy=0.9876,
+                epochs=5,
+                batch_size=64,
+                author_name="Custom Author",
+            )
+
+            self.assertIn("test-model", model_card)
+            self.assertIn("Custom Author", model_card)
+            # Ensure the custom author appears in citation
+            self.assertIn("author={Custom Author}", model_card)
 
     def test_create_config_json(self):
         """Test configuration JSON creation"""

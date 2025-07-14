@@ -15,6 +15,7 @@ from typing import Optional, Dict, Any, List
 from huggingface_hub import HfApi, create_repo, upload_folder
 from huggingface_hub.errors import RepositoryNotFoundError
 from .utils import ensure_directory
+from . import __author__ as PACKAGE_AUTHOR
 
 
 class MarkdownBuilder:
@@ -93,6 +94,7 @@ class HuggingFaceUploader:
         batch_size: int,
         learning_rate: Optional[float] = None,
         additional_info: Optional[Dict[str, Any]] = None,
+        author_name: Optional[str] = None,
     ) -> str:
         """
         Create a model card (README.md) for the model
@@ -105,11 +107,16 @@ class HuggingFaceUploader:
             batch_size: Training batch size
             learning_rate: Learning rate used
             additional_info: Additional information to include
+            author_name: Author name for citation (if not provided, uses package default)
 
         Returns:
             Model card content as string
         """
         additional_info = additional_info or {}
+
+        # Use provided author name or fall back to package default
+        if author_name is None:
+            author_name = PACKAGE_AUTHOR
 
         # Create frontmatter metadata
         frontmatter = {
@@ -250,7 +257,7 @@ class HuggingFaceUploader:
         builder.add_code_block(
             f"@misc{{{model_name.replace('-', '_')},\n"
             f"    title={{MNIST Handwritten Digit Recognition using FastAI}},\n"
-            f"    author={{Your Name}},\n"
+            f"    author={{{author_name}}},\n"
             f"    year={{2025}},\n"
             f"    publisher={{Hugging Face}},\n"
             f"    url={{https://huggingface.co/{username}/{model_name}}}\n"
@@ -327,6 +334,7 @@ class HuggingFaceUploader:
         commit_message: Optional[str] = None,
         additional_files: Optional[List[str]] = None,
         additional_metadata: Optional[Dict[str, Any]] = None,
+        author_name: Optional[str] = None,
     ) -> str:
         """
         Upload model to Hugging Face Hub
@@ -342,6 +350,7 @@ class HuggingFaceUploader:
             commit_message: Custom commit message
             additional_files: List of additional files to upload
             additional_metadata: Additional metadata for config
+            author_name: Author name for citation (if not provided, uses package default)
 
         Returns:
             URL of the uploaded repository
@@ -394,6 +403,7 @@ class HuggingFaceUploader:
                 batch_size=batch_size,
                 learning_rate=learning_rate,
                 additional_info=additional_metadata,
+                author_name=author_name,
             )
             (temp_path / "README.md").write_text(model_card_content, encoding="utf-8")
 
@@ -444,6 +454,7 @@ class HuggingFaceUploader:
         commit_message: Optional[str] = None,
         additional_files: Optional[List[str]] = None,
         additional_metadata: Optional[Dict[str, Any]] = None,
+        author_name: Optional[str] = None,
     ) -> str:
         """
         Upload model directly from MNISTTrainer instance
@@ -456,6 +467,7 @@ class HuggingFaceUploader:
             commit_message: Custom commit message
             additional_files: Additional files to upload
             additional_metadata: Additional metadata
+            author_name: Author name for citation (if not provided, uses package default)
 
         Returns:
             URL of the uploaded repository
@@ -502,6 +514,7 @@ class HuggingFaceUploader:
             commit_message=commit_message,
             additional_files=additional_files,
             additional_metadata=additional_metadata,
+            author_name=author_name,
         )
 
     def download_model(
@@ -544,6 +557,7 @@ def push_to_huggingface(
     commit_message: Optional[str] = None,
     additional_files: Optional[List[str]] = None,
     additional_metadata: Optional[Dict[str, Any]] = None,
+    author_name: Optional[str] = None,
 ) -> str:
     """
     Convenience function to upload a model to Hugging Face Hub
@@ -560,6 +574,7 @@ def push_to_huggingface(
         commit_message: Custom commit message
         additional_files: Additional files to upload
         additional_metadata: Additional metadata
+        author_name: Author name for citation (if not provided, uses package default)
 
     Returns:
         URL of the uploaded repository
@@ -576,4 +591,5 @@ def push_to_huggingface(
         commit_message=commit_message,
         additional_files=additional_files,
         additional_metadata=additional_metadata,
+        author_name=author_name,
     )

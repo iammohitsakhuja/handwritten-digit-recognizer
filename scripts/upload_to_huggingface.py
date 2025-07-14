@@ -115,6 +115,12 @@ def parse_arguments():
         help="Description of the model",
     )
 
+    parser.add_argument(
+        "--author-name",
+        type=str,
+        help="Author name for citation (if not provided, uses package default)",
+    )
+
     return parser.parse_args()
 
 
@@ -163,6 +169,7 @@ def main():
             commit_message=args.commit_message,
             additional_files=args.additional_files,
             additional_metadata=additional_metadata,
+            author_name=args.author_name,
         )
 
         print("\n" + "=" * 50)
