@@ -13,7 +13,8 @@ handwritten-digit-recognizer/
 ├── scripts/                       # Training and inference scripts
 │   ├── train_mnist_model.py       # Advanced training with full options
 │   ├── predict_digits.py          # Model inference and prediction
-│   └── run_training.py            # Quick start training
+│   ├── run_training.py            # Quick start training
+│   └── upload_to_huggingface.py   # Upload models to HuggingFace Hub
 ├── src/mnist_recognizer/          # Core library modules
 ├── notebooks/                     # Interactive Jupyter notebooks
 ├── examples/                      # GPU detection and demo scripts
