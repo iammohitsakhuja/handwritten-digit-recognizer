@@ -12,10 +12,23 @@ import shutil
 import yaml
 from pathlib import Path
 from typing import Optional, Dict, Any, List
+from dataclasses import dataclass, field
 from huggingface_hub import HfApi, create_repo, upload_folder
 from huggingface_hub.errors import RepositoryNotFoundError
 from .utils import ensure_directory
 from . import __author__ as PACKAGE_AUTHOR
+
+
+@dataclass
+class ModelMetadata:
+    model_name: str
+    username: Optional[str] = None
+    accuracy: float = 0.0
+    epochs: int = 1
+    batch_size: int = 32
+    learning_rate: Optional[float] = None
+    additional_info: Optional[Dict[str, Any]] = field(default_factory=dict)
+    author_name: Optional[str] = None
 
 
 class MarkdownBuilder:
@@ -87,36 +100,21 @@ class HuggingFaceUploader:
 
     def create_model_card(
         self,
-        model_name: str,
-        username: str,
-        accuracy: float,
-        epochs: int,
-        batch_size: int,
-        learning_rate: Optional[float] = None,
-        additional_info: Optional[Dict[str, Any]] = None,
-        author_name: Optional[str] = None,
+        metadata: ModelMetadata,
     ) -> str:
         """
         Create a model card (README.md) for the model
 
         Args:
-            model_name: Name of the model
-            username: HuggingFace username
-            accuracy: Final validation accuracy
-            epochs: Number of training epochs
-            batch_size: Training batch size
-            learning_rate: Learning rate used
-            additional_info: Additional information to include
-            author_name: Author name for citation (if not provided, uses package default)
+            metadata: ModelMetadata dataclass instance
 
         Returns:
             Model card content as string
         """
-        additional_info = additional_info or {}
+        additional_info = metadata.additional_info or {}
 
         # Use provided author name or fall back to package default
-        if author_name is None:
-            author_name = PACKAGE_AUTHOR
+        author_name = metadata.author_name or PACKAGE_AUTHOR
 
         # Create frontmatter metadata
         frontmatter = {
@@ -133,7 +131,7 @@ class HuggingFaceUploader:
             "metrics": ["accuracy"],
             "model-index": [
                 {
-                    "name": model_name,
+                    "name": metadata.model_name,
                     "results": [
                         {
                             "task": {
@@ -144,7 +142,7 @@ class HuggingFaceUploader:
                             "metrics": [
                                 {
                                     "type": "accuracy",
-                                    "value": round(accuracy, 4),
+                                    "value": round(metadata.accuracy, 4),
                                     "name": "Accuracy",
                                 }
                             ],
@@ -159,7 +157,7 @@ class HuggingFaceUploader:
         builder.add_frontmatter(frontmatter)
 
         # Main heading and description
-        builder.add_heading(model_name)
+        builder.add_heading(metadata.model_name)
         builder.add_heading("Model Description", 2)
         builder.add_paragraph(
             "This is a convolutional neural network trained to recognize handwritten digits (0-9) "
@@ -181,12 +179,12 @@ class HuggingFaceUploader:
 
         # Performance
         builder.add_heading("Performance", 2)
-        builder.add_list_item(f"**Validation Accuracy**: {accuracy:.4f}")
-        builder.add_list_item(f"**Training Epochs**: {epochs}")
-        builder.add_list_item(f"**Batch Size**: {batch_size}")
+        builder.add_list_item(f"**Validation Accuracy**: {metadata.accuracy:.4f}")
+        builder.add_list_item(f"**Training Epochs**: {metadata.epochs}")
+        builder.add_list_item(f"**Batch Size**: {metadata.batch_size}")
 
-        if learning_rate:
-            builder.add_list_item(f"**Learning Rate**: {learning_rate}")
+        if metadata.learning_rate:
+            builder.add_list_item(f"**Learning Rate**: {metadata.learning_rate}")
         builder.add_blank_line()
 
         # Usage section
@@ -210,7 +208,7 @@ class HuggingFaceUploader:
             "from fastai.vision.all import load_learner, PILImage\n"
             "from PIL import Image\n\n"
             f"# Load model\n"
-            f"model = load_learner('{model_name}.pkl')\n\n"
+            f"model = load_learner('{metadata.model_name}.pkl')\n\n"
             "# Load and predict an image\n"
             "img = PILImage.create('path_to_digit_image.png')\n"
             "pred_class, pred_idx, outputs = model.predict(img)\n"
@@ -242,10 +240,10 @@ class HuggingFaceUploader:
         # Files
         builder.add_heading("Files", 2)
         builder.add_list_item(
-            f"`{model_name}.pkl`: Complete FastAI learner (recommended for inference)"
+            f"`{metadata.model_name}.pkl`: Complete FastAI learner (recommended for inference)"
         )
         builder.add_list_item(
-            f"`{model_name}_state_dict.pth`: PyTorch state dictionary"
+            f"`{metadata.model_name}_state_dict.pth`: PyTorch state dictionary"
         )
         builder.add_list_item("`config.json`: Model configuration and metadata")
         builder.add_blank_line()
@@ -255,12 +253,12 @@ class HuggingFaceUploader:
         builder.add_paragraph("If you use this model, please cite:")
         builder.add_blank_line()
         builder.add_code_block(
-            f"@misc{{{model_name.replace('-', '_')},\n"
+            f"@misc{{{metadata.model_name.replace('-', '_')},\n"
             f"    title={{MNIST Handwritten Digit Recognition using FastAI}},\n"
             f"    author={{{author_name}}},\n"
             f"    year={{2025}},\n"
             f"    publisher={{Hugging Face}},\n"
-            f"    url={{https://huggingface.co/{username}/{model_name}}}\n"
+            f"    url={{https://huggingface.co/{metadata.username}/{metadata.model_name}}}\n"
             f"}}",
             "bibtex",
         )
@@ -395,7 +393,7 @@ class HuggingFaceUploader:
                 shutil.copy2(state_dict_path, temp_path / state_dict_path.name)
 
             # Create and save model card
-            model_card_content = self.create_model_card(
+            metadata = ModelMetadata(
                 model_name=repo_name,
                 username=username,
                 accuracy=accuracy,
@@ -405,6 +403,7 @@ class HuggingFaceUploader:
                 additional_info=additional_metadata,
                 author_name=author_name,
             )
+            model_card_content = self.create_model_card(metadata)
             (temp_path / "README.md").write_text(model_card_content, encoding="utf-8")
 
             # Create and save config

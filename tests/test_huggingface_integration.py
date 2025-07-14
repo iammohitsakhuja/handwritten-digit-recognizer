@@ -19,6 +19,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.mnist_recognizer.huggingface_hub import (
     HuggingFaceUploader,
     push_to_huggingface,
+    ModelMetadata,
 )
 
 
@@ -66,7 +67,7 @@ class TestHuggingFaceIntegration(unittest.TestCase):
         with patch("src.mnist_recognizer.huggingface_hub.HfApi"):
             uploader = HuggingFaceUploader(token="test_token")
 
-            model_card = uploader.create_model_card(
+            metadata = ModelMetadata(
                 model_name="test-model",
                 username="testuser",
                 accuracy=0.9876,
@@ -75,6 +76,8 @@ class TestHuggingFaceIntegration(unittest.TestCase):
                 learning_rate=0.001,
                 additional_info={"test": "value"},
             )
+
+            model_card = uploader.create_model_card(metadata)
 
             self.assertIn("test-model", model_card)
             self.assertIn("0.9876", model_card)
@@ -93,7 +96,7 @@ class TestHuggingFaceIntegration(unittest.TestCase):
         with patch("src.mnist_recognizer.huggingface_hub.HfApi"):
             uploader = HuggingFaceUploader(token="test_token")
 
-            model_card = uploader.create_model_card(
+            metadata = ModelMetadata(
                 model_name="test-model",
                 username="testuser",
                 accuracy=0.9876,
@@ -101,6 +104,8 @@ class TestHuggingFaceIntegration(unittest.TestCase):
                 batch_size=64,
                 author_name="Custom Author",
             )
+
+            model_card = uploader.create_model_card(metadata)
 
             self.assertIn("test-model", model_card)
             self.assertIn("Custom Author", model_card)
