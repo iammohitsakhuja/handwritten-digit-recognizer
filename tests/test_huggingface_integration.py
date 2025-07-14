@@ -68,6 +68,7 @@ class TestHuggingFaceIntegration(unittest.TestCase):
 
             model_card = uploader.create_model_card(
                 model_name="test-model",
+                username="testuser",
                 accuracy=0.9876,
                 epochs=5,
                 batch_size=64,
@@ -82,6 +83,8 @@ class TestHuggingFaceIntegration(unittest.TestCase):
             self.assertIn("**Batch Size**: 64", model_card)
             self.assertIn("0.001", model_card)
             self.assertIn("test", model_card)
+            # Check that username is in the citation URL
+            self.assertIn("https://huggingface.co/testuser/test-model", model_card)
 
     def test_create_config_json(self):
         """Test configuration JSON creation"""

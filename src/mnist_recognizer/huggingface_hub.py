@@ -86,6 +86,7 @@ class HuggingFaceUploader:
     def create_model_card(
         self,
         model_name: str,
+        username: str,
         accuracy: float,
         epochs: int,
         batch_size: int,
@@ -97,6 +98,7 @@ class HuggingFaceUploader:
 
         Args:
             model_name: Name of the model
+            username: HuggingFace username
             accuracy: Final validation accuracy
             epochs: Number of training epochs
             batch_size: Training batch size
@@ -250,7 +252,7 @@ class HuggingFaceUploader:
             f"    author={{Your Name}},\n"
             f"    year={{2025}},\n"
             f"    publisher={{Hugging Face}},\n"
-            f"    url={{https://huggingface.co/iammohitsakhuja/{model_name}}}\n"
+            f"    url={{https://huggingface.co/{username}/{model_name}}}\n"
             f"}}",
             "bibtex",
         )
@@ -385,6 +387,7 @@ class HuggingFaceUploader:
             # Create and save model card
             model_card_content = self.create_model_card(
                 model_name=repo_name,
+                username=username,
                 accuracy=accuracy,
                 epochs=epochs,
                 batch_size=batch_size,
@@ -458,6 +461,10 @@ class HuggingFaceUploader:
         """
         if trainer.learn is None:
             raise ValueError("Trainer has no trained model. Train a model first.")
+
+        # Get username
+        user_info = self.api.whoami(token=self.token)
+        username = user_info["name"]
 
         # Get training metrics
         validation_results = trainer.learn.validate()
