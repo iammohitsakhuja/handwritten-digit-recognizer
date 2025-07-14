@@ -11,6 +11,7 @@ from pathlib import Path
 import tempfile
 import os
 from unittest.mock import patch, MagicMock
+import shutil
 
 # Add the parent directory to the path so we can import the modules
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -35,7 +36,6 @@ class TestHuggingFaceIntegration(unittest.TestCase):
 
     def tearDown(self):
         """Clean up after tests"""
-        import shutil
 
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 

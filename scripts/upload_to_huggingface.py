@@ -119,8 +119,11 @@ def load_metadata(metadata_path: str) -> dict:
     try:
         with open(metadata_path, "r") as f:
             return json.load(f)
-    except Exception as e:
-        print(f"Warning: Could not load metadata from {metadata_path}: {e}")
+    except FileNotFoundError as e:
+        print(f"Warning: Metadata file not found at {metadata_path}: {e}")
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"Warning: Failed to parse JSON metadata from {metadata_path}: {e}")
         return {}
 
 

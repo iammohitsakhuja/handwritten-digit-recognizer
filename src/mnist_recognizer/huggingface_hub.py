@@ -13,6 +13,7 @@ import yaml
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 from huggingface_hub import HfApi, create_repo, upload_folder
+from huggingface_hub.errors import RepositoryNotFoundError
 from .utils import ensure_directory
 
 
@@ -360,7 +361,7 @@ class HuggingFaceUploader:
         try:
             self.api.repo_info(full_repo_name, token=self.token)
             print(f"Repository {full_repo_name} already exists")
-        except Exception:  # Catch any repo not found error
+        except RepositoryNotFoundError:  # Catch any repo not found error
             print(f"Creating new repository: {full_repo_name}")
             create_repo(
                 repo_id=full_repo_name,
@@ -468,10 +469,11 @@ class HuggingFaceUploader:
 
         # Get training metrics
         validation_results = trainer.learn.validate()
+        # Extract accuracy from recorder values or fallback to validation results
         accuracy = (
             trainer.learn.recorder.values[-1][1]
             if trainer.learn.recorder.values
-            else 0.0
+            else validation_results.get("accuracy", 0.0)
         )
 
         # Default model path if not provided
