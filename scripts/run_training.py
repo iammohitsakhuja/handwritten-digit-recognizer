@@ -9,6 +9,10 @@ import sys
 import argparse
 import torch
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add the src directory to the Python path
 sys.path.append(str(Path(__file__).parent.parent / "src"))

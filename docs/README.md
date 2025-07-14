@@ -131,6 +131,35 @@ The notebook includes:
 - **Model Export**: Saves both FastAI and PyTorch formats
 - **Comprehensive Evaluation**: Accuracy, confusion matrix, top losses
 - **Interactive Visualization**: Sample predictions and error analysis
+- **🤗 HuggingFace Hub Integration**: Upload and share your models easily
+
+## HuggingFace Hub Integration
+
+You can now upload your trained models to Hugging Face Hub for sharing and deployment:
+
+```bash
+# Upload via command line
+python scripts/upload_to_huggingface.py \
+    --model-path models/mnist_digit_recognizer.pkl \
+    --repo-name my-mnist-model \
+    --accuracy 0.9892 \
+    --epochs 5 \
+    --batch-size 64
+```
+
+```python
+# Upload from Python
+from mnist_recognizer import MNISTTrainer
+
+trainer = MNISTTrainer()
+# ... train your model ...
+
+# Upload to HuggingFace
+repo_url = trainer.push_to_huggingface(
+    repo_name="my-mnist-model",
+    private=True
+)
+```
 
 ## Expected Performance
 

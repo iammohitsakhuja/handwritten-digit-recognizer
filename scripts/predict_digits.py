@@ -9,6 +9,10 @@ using the trained MNIST model. It uses the MNISTPredictor class from the inferen
 import sys
 from pathlib import Path
 import argparse
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add the src directory to the path so we can import the inference module
 sys.path.append(str(Path(__file__).parent.parent / "src"))

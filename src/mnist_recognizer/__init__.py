@@ -20,6 +20,7 @@ from .utils import (
     get_inference_device,
     save_text_file,
 )
+from .huggingface_hub import HuggingFaceUploader, push_to_huggingface
 
 __all__ = [
     "MNISTTrainer",
@@ -32,4 +33,6 @@ __all__ = [
     "print_success_message",
     "get_safe_learning_rate",
     "get_inference_device",
+    "HuggingFaceUploader",
+    "push_to_huggingface",
 ]
