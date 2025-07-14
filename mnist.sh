@@ -27,6 +27,7 @@ if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     echo "  demo-gpu       Show GPU detection and capabilities"
     echo "  demo-markdown  Demo new markdown model card generation"
     echo "  test-gpu       Test GPU functionality"
+    echo "  upload         Upload trained model to Hugging Face Hub"
     echo "  notebook       Launch Jupyter notebook tutorial"
     echo "  clean          Clean output and model directories"
     echo "  help           Show detailed help for individual scripts"
@@ -39,11 +40,13 @@ if [[ $# -eq 0 ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     echo "  $0 demo-gpu                # Check GPU support"
     echo "  $0 demo-markdown           # Demo markdown model card generation"
     echo "  $0 test-gpu                # Test GPU functionality"
+    echo "  $0 upload                  # Upload model to Hugging Face Hub"
     echo "  $0 notebook                # Open interactive tutorial"
     echo "  $0 clean                   # Clean output and model files"
     echo "  $0 help train              # Show training script help"
     echo "  $0 help predict            # Show prediction script help"
     echo "  $0 help run                # Show run training script help"
+    echo "  $0 help upload             # Show upload script help"
     echo ""
     exit 0
 fi
@@ -87,6 +90,11 @@ case "$COMMAND" in
         python examples/test_gpu.py "$@"
         ;;
 
+    "upload")
+        echo "🚀 Uploading model to Hugging Face Hub..."
+        python scripts/upload_to_huggingface.py "$@"
+        ;;
+
     "notebook")
         echo "📓 Launching Jupyter notebook..."
         jupyter notebook notebooks/mnist_digit_recognition.ipynb
@@ -122,6 +130,7 @@ case "$COMMAND" in
             echo "  help train     - Show scripts/train_mnist_model.py options"
             echo "  help predict   - Show scripts/predict_digits.py options"
             echo "  help run       - Show scripts/run_training.py options"
+            echo "  help upload    - Show scripts/upload_to_huggingface.py options"
         else
             case "$1" in
                 "train")
@@ -133,9 +142,12 @@ case "$COMMAND" in
                 "run")
                     python scripts/run_training.py --help
                     ;;
+                "upload")
+                    python scripts/upload_to_huggingface.py --help
+                    ;;
                 *)
                     echo "Unknown help topic: $1"
-                    echo "Available topics: train, predict, run"
+                    echo "Available topics: train, predict, run, upload"
                     exit 1
                     ;;
             esac

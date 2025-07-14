@@ -6,7 +6,7 @@ This guide describes how to use the command-line interface for the Handwritten D
 
 ### Main Interface
 
-- `mnist.sh` - Main script providing easy access to all functionality (training, prediction, cleanup, etc.)
+- `mnist.sh` - Main script providing easy access to all functionality (training, prediction, upload, cleanup, etc.)
 
 ### Python Scripts
 
@@ -15,6 +15,7 @@ All Python scripts are located in the `scripts/` directory and include comprehen
 - `scripts/train_mnist_model.py` - Main training script with full control over training parameters
 - `scripts/predict_digits.py` - Model inference script for making predictions
 - `scripts/run_training.py` - Quick start script for simplified training
+- `scripts/upload_to_huggingface.py` - Upload trained models to Hugging Face Hub
 
 ## Usage Examples
 
@@ -103,6 +104,43 @@ python scripts/predict_digits.py \
     --output-dir ./out
 ```
 
+### 3. Upload Script
+
+#### Upload to Hugging Face Hub
+
+```bash
+# Basic upload (requires HUGGINGFACE_TOKEN environment variable)
+python scripts/upload_to_huggingface.py \
+    --model-path models/mnist_digit_recognizer.pkl \
+    --repo-name my-mnist-model \
+    --accuracy 0.9892 \
+    --epochs 5 \
+    --batch-size 64
+
+# Upload with all options
+python scripts/upload_to_huggingface.py \
+    --model-path models/mnist_digit_recognizer.pkl \
+    --repo-name my-mnist-model \
+    --accuracy 0.9892 \
+    --epochs 5 \
+    --batch-size 64 \
+    --learning-rate 0.001 \
+    --description "High-accuracy MNIST digit recognition model" \
+    --additional-files out/confusion_matrix.png out/training_plots.png \
+    --public \
+    --commit-message "Upload trained model with 98.92% accuracy" \
+    --token your_huggingface_token_here
+
+# Upload with metadata file
+python scripts/upload_to_huggingface.py \
+    --model-path models/mnist_digit_recognizer.pkl \
+    --repo-name my-mnist-model \
+    --accuracy 0.9892 \
+    --epochs 5 \
+    --batch-size 64 \
+    --metadata metadata.json
+```
+
 ## Command Line Arguments
 
 ### train_mnist_model.py
@@ -142,6 +180,23 @@ python scripts/predict_digits.py \
 | `--fast` | `-f` | | Fast training mode (minimal epochs, no plots) |
 | `--quiet` | `-q` | | Quiet mode with minimal output |
 
+### upload_to_huggingface.py
+
+| Argument | Short | Default | Description |
+|----------|-------|---------|-------------|
+| `--model-path` | `-m` | **Required** | Path to the trained model (.pkl file) |
+| `--repo-name` | `-r` | **Required** | Name of the Hugging Face repository to create/update |
+| `--accuracy` | `-a` | **Required** | Final validation accuracy of the model |
+| `--epochs` | `-e` | **Required** | Number of training epochs |
+| `--batch-size` | `-b` | **Required** | Training batch size |
+| `--learning-rate` | `-lr` | | Learning rate used during training |
+| `--token` | `-t` | env var | Hugging Face token (uses HUGGINGFACE_TOKEN if not provided) |
+| `--public` | | | Make the repository public (default is private) |
+| `--commit-message` | `-c` | | Custom commit message |
+| `--additional-files` | | | Additional files to upload with the model |
+| `--metadata` | | | Path to JSON file with additional metadata |
+| `--description` | | | Description of the model |
+
 ## Getting Help
 
 Each script provides detailed help information:
@@ -150,6 +205,7 @@ Each script provides detailed help information:
 python scripts/train_mnist_model.py --help
 python scripts/predict_digits.py --help
 python scripts/run_training.py --help
+python scripts/upload_to_huggingface.py --help
 ```
 
 ## Example Workflows
